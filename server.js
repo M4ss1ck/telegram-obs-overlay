@@ -103,14 +103,11 @@ server.listen(PORT, () => {
 });
 
 // Start the bot
-bot
-  .launch()
-  .then(() => {
-    console.log("Telegram bot started");
-  })
-  .catch((err) => {
-    console.error("Error starting Telegram bot:", err);
-  });
+bot.launch().catch((err) => {
+  console.error("Error starting Telegram bot:", err);
+});
+
+console.log("Telegram bot started");
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
