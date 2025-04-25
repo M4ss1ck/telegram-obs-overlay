@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram OBS Overlay Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Telegram OBS Overlay Manager</h1>
+
+        <div class="card">
+            <h2>How to Use</h2>
+            <ol>
+                <li>Configure your Telegram bot token and chat ID in the .env file</li>
+                <li>Start the server with <code>npm start</code></li>
+                <li>Copy the overlay URL below and add it as a Browser Source in OBS</li>
+            </ol>
+
+            <div class="overlay-url">
+                <h3>Your Overlay URL:</h3>
+                <input type="text" id="overlay-url" readonly>
+                <button id="copy-btn">Copy</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Settings</h2>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label for="max-messages">Maximum messages to display:</label>
+                    <input type="number" id="max-messages" value="5" min="1" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="display-time">Message display time (seconds):</label>
+                    <input type="number" id="display-time" value="10" min="1" max="60">
+                </div>
+
+                <div class="form-group">
+                    <label for="theme">Theme:</label>
+                    <select id="theme">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="transparent">Transparent</option>
+                    </select>
+                </div>
+
+                <button id="apply-settings">Apply Settings</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Preview</h2>
+            <div class="preview-container">
+                <iframe id="preview-frame" src="/overlay?preview=true"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
