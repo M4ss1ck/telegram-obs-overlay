@@ -20,7 +20,7 @@ body {
   align-items: flex-start;
   justify-content: flex-end;
   gap: 10px;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: transparent;
 }
 
@@ -29,6 +29,7 @@ body {
   padding: 10px 15px;
   border-radius: 10px;
   margin-bottom: 10px;
+  flex-shrink: 0;
   -webkit-animation: fadeIn 0.5s ease-in-out, slideIn 0.5s ease-in-out;
           animation: fadeIn 0.5s ease-in-out, slideIn 0.5s ease-in-out;
   position: relative;
