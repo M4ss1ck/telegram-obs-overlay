@@ -13,17 +13,31 @@
         <h1>Telegram OBS Overlay Manager</h1>
 
         <div class="card">
-            <h2>How to Use</h2>
+            <h2>Setup Instructions</h2>
             <ol>
-                <li>Configure your Telegram bot token and chat ID in the .env file</li>
-                <li>Start the server with <code>npm start</code></li>
-                <li>Copy the overlay URL below and add it as a Browser Source in OBS</li>
-                <li>Apply your preferred message style and settings</li>
+                <li><strong>Find the Bot:</strong> The Telegram bot configured for this overlay is: <strong
+                        id="bot-username">Loading...</strong>. Search for this username in Telegram.</li>
+                <li><strong>Add Bot to Chat:</strong> Add the bot (<span class="bot-username-inline">@Loading...</span>)
+                    to the Telegram group or channel you want to display messages from. Ensure it has permission to read
+                    messages.</li>
+                <li><strong>Get Chat ID:</strong> In the Telegram chat where you added the bot, type the command: <code
+                        class="inline-code">/chatid</code> The bot will reply with the unique Chat ID for that chat.
+                </li>
+                <li><strong>Enter Chat ID:</strong> Enter the Chat ID provided by the bot into the "Chat ID" field in
+                    the "Basic" settings tab below.</li>
+                <li><strong>Configure & Apply:</strong> Adjust the style and display settings as needed, then click
+                    "Apply Settings".</li>
+                <li><strong>Add to OBS:</strong> Copy the generated "Overlay URL" and add it as a Browser Source in OBS.
+                    Make sure the OBS source dimensions match your expectations (e.g., width 400px, height 600px).</li>
             </ol>
+        </div>
 
+        <div class="card">
+            <h2>Overlay URL</h2>
+            <p>Use this URL as a Browser Source in OBS after applying your settings. Ensure the Chat ID is correctly
+                entered below first.</p>
             <div class="overlay-url">
-                <h3>Your Overlay URL:</h3>
-                <input type="text" id="overlay-url" readonly>
+                <input type="text" id="overlay-url" readonly placeholder="Apply settings to generate URL">
                 <button id="copy-btn">Copy</button>
             </div>
         </div>
@@ -39,6 +53,14 @@
 
                 <div class="tab-content active" id="basic-tab">
                     <div class="form-group">
+                        <label for="chat-id">Chat ID:</label>
+                        <input type="text" id="chat-id" placeholder="Enter Chat ID from bot">
+                        <p class="note">Get this by adding the bot (<span
+                                class="bot-username-inline">@Loading...</span>) to your chat and typing <code
+                                class="inline-code">/chatid</code></p>
+                    </div>
+
+                    <div class="form-group">
                         <label for="max-messages">Maximum messages to display:</label>
                         <input type="number" id="max-messages" value="5" min="1" max="20">
                     </div>
@@ -49,8 +71,10 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="checkbox" id="keep-messages">
-                        <label for="keep-messages">Keep messages permanently (don't auto-remove)</label>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="keep-messages">
+                            <label for="keep-messages">Keep messages permanently (don't auto-remove)</label>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -164,12 +188,15 @@
 
         <div class="card">
             <h2>Preview</h2>
+            <p class="note">Preview shows styling but requires a valid Chat ID and applied settings to display live
+                messages.</p>
             <div class="preview-container">
-                <iframe id="preview-frame" src="/overlay?preview=true"></iframe>
+                <iframe id="preview-frame" src="about:blank" title="Overlay Preview"></iframe>
             </div>
         </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
 

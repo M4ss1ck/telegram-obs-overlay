@@ -4,27 +4,30 @@ A real-time Telegram to OBS overlay generator that displays messages from a spec
 
 ## Features
 
-- Real-time display of Telegram messages in OBS
-- Customizable themes (Dark, Light, Transparent)
-- Adjustable message display time
-- Configurable maximum number of messages
-- Support for text messages, images, stickers, and animations
+- Real-time display of Telegram messages in OBS via Socket.IO
+- User-configurable Chat ID via the web interface
+- Customizable themes (Dark, Light, Transparent, Purple, Green, Gaming) and custom colors
+- Adjustable message display time and maximum message count
+- Option to keep messages on screen permanently
+- Support for text messages, images, stickers, and animations (GIFs)
 - Easy setup with a browser source in OBS
+- Built-in `/chatid` command for the bot to easily get the required Chat ID
+- Docker and Coolify support
 
 ## Setup
 
 ### Prerequisites
 
-- Node.js (v12 or higher)
+- Node.js (v14 or higher recommended)
 - A Telegram bot token (get one from [@BotFather](https://t.me/botfather))
-- The chat ID of the Telegram chat you want to display
+- Your Telegram bot added to the chat/channel you want to display
 
 ### Installation
 
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/yourusername/telegram-obs-overlay.git
+   git clone https://github.com/M4ss1ck/telegram-obs-overlay.git
    cd telegram-obs-overlay
    ```
 
@@ -40,19 +43,13 @@ A real-time Telegram to OBS overlay generator that displays messages from a spec
    cp .env.example .env
    ```
 
-4. Edit the `.env` file and add your Telegram bot token and chat ID:
-   ```
+4. Edit the `.env` file and add your Telegram bot token.
+
+   ```dotenv
+   # .env
    BOT_TOKEN=your_bot_token_here
-   CHAT_ID=your_chat_id_here
-   PORT=3000
+   PORT=3000 # Optional: Change the port if needed
    ```
-
-### Getting Your Chat ID
-
-1. Add your bot to the chat you want to display
-2. Send a message in the chat
-3. Visit `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
-4. Look for the `"chat":{"id":123456789}` field to get your chat ID
 
 ## Usage
 
@@ -62,20 +59,48 @@ A real-time Telegram to OBS overlay generator that displays messages from a spec
    npm start
    ```
 
-2. Open your browser and go to `http://localhost:3000` (or your configured port)
+   The server will start, and the bot will come online. You'll see output like:
 
-3. Add the overlay URL as a Browser Source in OBS:
+   ```
+   Server running on port 3000
+   Configuration page: http://localhost:3000/
+   Attempting to start Telegram bot...
+   Bot initialized: @your_bot_username
+   ```
 
-   - In OBS, add a new "Browser" source
-   - Set the URL to `http://localhost:3000/overlay`
-   - Set the width and height as needed
-   - Check "Refresh browser when scene becomes active"
+2. Open the configuration page:
 
-4. Customize the overlay appearance in the web interface and click "Apply Settings"
+   Open your browser and go to `http://localhost:3000` (or your configured port).
+
+3. Get Your Chat ID:
+
+   - The configuration page will display your bot's username (e.g., `@your_bot_username`).
+   - Add this bot to the Telegram group or channel you want to display messages from. Make sure it has permissions to read messages (adding it as an admin is easiest).
+   - In that Telegram chat (group/channel), type the command: `/chatid`
+   - The bot will reply with the unique Chat ID for that chat (it's usually a negative number for groups/channels).
+
+4. Configure the overlay:
+
+   - On the configuration page (`http://localhost:3000`), go to the "Basic" settings tab.
+   - Enter the Chat ID you got from the bot into the "Chat ID" field.
+   - Customize other settings like theme, colors, max messages, and display time as needed.
+   - Click "Apply Settings".
+
+5. Add to OBS:
+
+   - Copy the generated "Overlay URL" from the configuration page.
+   - In OBS, add a new "Browser" source.
+   - Paste the copied URL into the "URL" field.
+   - Set the desired Width and Height for the overlay (e.g., Width: 400, Height: 600).
+   - **Important:** Ensure the OBS Browser Source dimensions match your expectations for how the chat should look.
+   - Check "Refresh browser when scene becomes active" for reliability.
+   - Click "OK".
+
+Messages sent in the configured Telegram chat should now appear in your OBS source!
 
 ## Docker Deployment
 
-You can run this application using Docker with file watching for development.
+You can run this application using Docker. The setup automatically detects the `BOT_TOKEN` and `PORT` from your `.env` file.
 
 ### Production Mode
 
@@ -100,14 +125,6 @@ npm run docker:dev
 # Or with docker compose directly
 docker compose up --watch
 ```
-
-> **Important Note:** The Docker configuration uses Docker Compose's `watch` feature instead of volume mounts for development. This provides better performance and more control over which files are synchronized. Don't add volume mounts that would conflict with the watch paths, or you'll see the warning: `path also declared by a bind mount volume, this path won't be monitored!`
-
-File watching will:
-
-- Automatically sync code changes to the container without restarting
-- Rebuild the container when package.json changes
-- Ignore node_modules and other unnecessary files
 
 ### Docker Commands
 
@@ -136,9 +153,9 @@ This project includes ready-to-use configuration for deployment with [Coolify](h
 3. Configure the deployment:
 
    - Set the build method to "Dockerfile"
-   - Add the following environment variables:
+   - Add the following **required** environment variable:
      - `BOT_TOKEN`: Your Telegram bot token
-     - `CHAT_ID`: Your Telegram chat ID
+   - Optionally add:
      - `PORT`: Port for the application (default: 3000)
 
 4. Set up the network:
@@ -146,33 +163,44 @@ This project includes ready-to-use configuration for deployment with [Coolify](h
    - Make sure to expose port 3000 (or your custom port)
    - Configure the domain if you want to access the application via a domain name
 
-5. Deploy the application and wait for the build to complete.
+5. Deploy the application.
 
-6. Once deployed, you can access the overlay at `https://your-domain/overlay` or `http://your-server-ip:3000/overlay`.
+6. Once deployed, access the configuration page at `http://your-coolify-app-url:3000` (or your domain) to set the Chat ID and get the Overlay URL. The overlay itself will be available at the `/overlay` path on the same domain/IP.
 
 ## Customization
 
-The web interface allows you to customize:
+The web interface (`http://localhost:3000`) allows you to customize:
 
+- The specific Telegram Chat ID to monitor
 - Maximum number of messages displayed at once
-- How long each message stays on screen
-- The theme (Dark, Light, or Transparent)
+- How long each message stays on screen (or keep permanently)
+- The theme (Dark, Light, Transparent, Purple, Green, Gaming)
+- Custom message bubble color, text color, and name color
 
 ## Bot Permissions
 
-For the bot to receive messages from a group or channel:
+For the bot to receive messages:
 
-1. For groups: Add the bot as an administrator or regular member
-2. For channels: Add the bot as an administrator
-3. For private chats: Start a conversation with the bot
+1. Add the bot to the target group or channel.
+2. **Crucially, ensure the bot has permission to read messages.** The simplest way is often to make it an administrator. If not an admin, group privacy settings might prevent it from seeing all messages.
+3. For private chats with the bot, simply start a conversation.
 
 ## Troubleshooting
 
-- **Messages not appearing?** Make sure your bot is in the chat and has permission to read messages
-- **Bot not receiving messages?** For privacy reasons, Telegram bots in groups only receive messages that explicitly mention them, or commands they can handle, unless the bot is an admin
-- **Images not showing?** Make sure your server can reach the Telegram API to download the files
-- **Docker or Coolify issues?** Check the logs for any errors related to environment variables or network connectivity
-- **Watch mode not working?** Ensure you don't have conflicting volume mounts in your docker-compose files
+- **Messages not appearing?**
+  - Double-check the Chat ID entered in the web UI is correct (use `/chatid` in the target chat).
+  - Ensure the bot is in the chat _and_ has permission to read messages (Admin privileges recommended).
+  - Verify the Overlay URL copied into OBS is correct and includes the `chatId` parameter.
+  - Check the server console output for errors during message processing.
+  - Check the OBS Browser Source console (Right-click source -> Interact -> Right-click inside -> Inspect -> Console) for connection errors or other issues.
+- **Bot not responding to `/chatid`?**
+  - Ensure the server is running (`npm start`).
+  - Check the server console for startup errors (e.g., invalid `BOT_TOKEN`).
+  - Make sure you are typing the command _exactly_ as `/chatid` in the correct chat.
+- **Web UI not loading bot username?** Check the server console for errors fetching bot info (likely an invalid `BOT_TOKEN` in `.env`).
+- **Images/Stickers not showing?** Ensure the server can reach `https://api.telegram.org`. Firewalls or network issues might block this.
+- **Docker/Coolify issues?** Check container logs (`npm run docker:logs` or via Coolify dashboard) for errors related to `BOT_TOKEN`, port conflicts, or network connectivity.
+- **Watch mode not working?** Ensure you don't have conflicting volume mounts in your `docker-compose.yml` or Coolify configuration.
 
 ## License
 

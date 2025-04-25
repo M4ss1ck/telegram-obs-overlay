@@ -1,4 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // --- Fetch and display bot username ---
+  const botUsernameElements = document.querySelectorAll(
+    "#bot-username, .bot-username-inline"
+  );
+  fetch("/api/bot-info")
+    .then((response) => response.json())
+    .then((data) => {
+      const username = data.username
+        ? `@${data.username}`
+        : "Error loading username";
+      botUsernameElements.forEach((el) => (el.textContent = username));
+    })
+    .catch((error) => {
+      console.error("Error fetching bot info:", error);
+      botUsernameElements.forEach(
+        (el) => (el.textContent = "Error loading username")
+      );
+    });
+  // --- End Bot Username ---
+
   // Set the overlay URL
   const protocol = window.location.protocol;
   const hostname = window.location.hostname;
@@ -145,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Apply settings button
   const applySettingsBtn = document.getElementById("apply-settings");
   applySettingsBtn.addEventListener("click", () => {
+    const chatId = document.getElementById("chat-id").value.trim();
     const maxMessages = document.getElementById("max-messages").value;
     const displayTime = document.getElementById("display-time").value;
     const keepMessages = document.getElementById("keep-messages").checked;
@@ -153,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("use-custom-colors").checked;
 
     // Store base settings in localStorage
+    localStorage.setItem("chat-id", chatId);
     localStorage.setItem("max-messages", maxMessages);
     localStorage.setItem("display-time", displayTime);
     localStorage.setItem("theme", theme);
@@ -184,17 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("overlay-url").value = fullOverlayUrl;
 
     // Update preview frame src with the preview version of the URL
-    const previewUrl = fullOverlayUrl.replace(
-      "/overlay?",
-      "/overlay?preview=true&"
-    );
-    const previewFrame = document.getElementById("preview-frame");
-    if (previewFrame) {
-      console.log("Updating preview with URL:", previewUrl);
-      previewFrame.src = previewUrl;
-    } else {
-      console.error("Preview frame element not found");
-    }
+    updatePreview();
 
     // Show feedback
     const originalText = applySettingsBtn.textContent;
@@ -251,11 +263,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load settings from localStorage if available
   const loadSettings = () => {
+    const savedChatId = localStorage.getItem("chat-id");
     const savedMaxMessages = localStorage.getItem("max-messages");
     const savedDisplayTime = localStorage.getItem("display-time");
     const savedTheme = localStorage.getItem("theme");
     const savedKeepMessages = localStorage.getItem("keepMessages");
     const savedUseCustomColors = localStorage.getItem("useCustomColors");
+
+    if (savedChatId) {
+      document.getElementById("chat-id").value = savedChatId;
+    }
 
     if (savedMaxMessages) {
       document.getElementById("max-messages").value = savedMaxMessages;
@@ -364,6 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper function to generate the full overlay URL with all settings
   function generateOverlayUrl() {
+    const chatId = document.getElementById("chat-id").value.trim();
     const maxMessages = document.getElementById("max-messages").value;
     const displayTime = document.getElementById("display-time").value;
     const keepMessages = document.getElementById("keep-messages").checked;
@@ -377,7 +395,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const port = window.location.port;
     let baseUrl = `${protocol}//${hostname}:${port}/overlay`; // Use the actual overlay path
 
-    let params = `?maxMessages=${maxMessages}&displayTime=${displayTime}&keepMessages=${keepMessages}`;
+    // Add chatId as the FIRST parameter for clarity and potential server-side routing
+    let params = `?chatId=${encodeURIComponent(chatId)}`;
+    params += `&maxMessages=${maxMessages}`;
+    params += `&displayTime=${displayTime}`;
+    params += `&keepMessages=${keepMessages}`;
 
     if (useCustomColors) {
       const backgroundColor = "rgba(0, 0, 0, 0)"; // Always transparent background
@@ -402,14 +424,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update preview iframe with current settings
   function updatePreview() {
+    const chatId = document.getElementById("chat-id").value.trim();
     const maxMessages = document.getElementById("max-messages").value;
     const displayTime = document.getElementById("display-time").value;
     const keepMessages = document.getElementById("keep-messages").checked;
-    const theme = document.getElementById("theme").value;
     const useCustomColors =
       document.getElementById("use-custom-colors").checked;
 
-    let previewUrl = `/overlay?preview=true&maxMessages=${maxMessages}&displayTime=${displayTime}&keepMessages=${keepMessages}`;
+    // Base preview URL includes necessary parameters for overlay.js
+    let previewUrl = `/overlay?preview=true`;
+    previewUrl += `&chatId=${encodeURIComponent(chatId)}`;
+    previewUrl += `&maxMessages=${maxMessages}`;
+    previewUrl += `&displayTime=${displayTime}`;
+    previewUrl += `&keepMessages=${keepMessages}`;
 
     if (useCustomColors) {
       // Always use transparent background
@@ -428,16 +455,18 @@ document.addEventListener("DOMContentLoaded", () => {
       previewUrl += `&textColor=${encodeURIComponent(textColor)}`;
       previewUrl += `&nameColor=${encodeURIComponent(nameColor)}`;
       previewUrl += `&useCustomColors=true`;
-    } else {
-      // Always include theme parameter when not using custom colors
-      previewUrl += `&theme=${theme}`;
-      previewUrl += `&useCustomColors=false`;
     }
 
     const previewFrame = document.getElementById("preview-frame");
     if (previewFrame) {
-      console.log("Updating preview with URL:", previewUrl);
-      previewFrame.src = previewUrl;
+      // Only update src if chat ID is provided, otherwise show blank
+      if (chatId) {
+        console.log("Updating preview with URL:", previewUrl);
+        previewFrame.src = previewUrl;
+      } else {
+        console.log("Chat ID missing, clearing preview.");
+        previewFrame.src = "about:blank";
+      }
     } else {
       console.error("Preview frame element not found");
     }
