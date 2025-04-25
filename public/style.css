@@ -98,12 +98,34 @@ label {
   font-weight: bold;
 }
 
-input[type="number"], select {
+input[type="number"], 
+input[type="color"],
+select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+input[type="color"] {
+  height: 40px;
+  width: 60px;
+  padding: 2px;
+}
+
+input[type="range"] {
+  width: calc(100% - 90px);
+  margin: 0 10px;
+}
+
+.color-control {
+  display: flex;
+  align-items: center;
 }
 
 #apply-settings {
@@ -123,12 +145,142 @@ input[type="number"], select {
   border-radius: 4px;
   overflow: hidden;
   background-color: #333;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QEFECsmoylg4QAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAkSURBVDjLY2AYBaNgFIwCMsB/MiaHj9o+asCoTKPAw4MGAABzywJJKdKKKwAAAABJRU5ErkJggg==');
+  background-repeat: repeat;
 }
 
 #preview-frame {
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Notes and information boxes */
+.note {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.info-box {
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.info-box p {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 0.9em;
+}
+
+/* Tabs styling */
+.settings-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-btn.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Preset themes */
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.preset-card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.preset-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.preset-card.selected {
+  border: 2px solid #3498db;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.preset-preview {
+  height: 80px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QEFECsmoylg4QAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAkSURBVDjLY2AYBaNgFIwCMsB/MiaHj9o+asCoTKPAw4MGAABzywJJKdKKKwAAAABJRU5ErkJggg==');
+  background-repeat: repeat;
+}
+
+.preview-msg {
+  width: 80%;
+  height: 30px;
+  border-radius: 8px;
+}
+
+/* Dark theme preview */
+.dark-preview .preview-msg {
+  background-color: rgba(60, 60, 60, 0.8);
+}
+
+/* Light theme preview */
+.light-preview .preview-msg {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Transparent theme preview */
+.transparent-preview .preview-msg {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Purple theme preview */
+.purple-preview .preview-msg {
+  background-color: rgba(83, 49, 156, 0.8);
+}
+
+/* Green theme preview */
+.green-preview .preview-msg {
+  background-color: rgba(0, 92, 75, 0.8);
+}
+
+/* Gaming theme preview */
+.gaming-preview .preview-msg {
+  background-color: rgba(20, 20, 20, 0.9);
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
 }
 
 @media (max-width: 768px) {
@@ -143,5 +295,25 @@ input[type="number"], select {
   
   #copy-btn {
     width: 100%;
+  }
+  
+  .preset-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .preset-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-tabs {
+    flex-direction: column;
+  }
+  
+  .tab-btn {
+    width: 100%;
+    margin-bottom: 5px;
+    border-radius: 4px;
   }
 } 

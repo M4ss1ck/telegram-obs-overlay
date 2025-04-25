@@ -18,6 +18,7 @@
                 <li>Configure your Telegram bot token and chat ID in the .env file</li>
                 <li>Start the server with <code>npm start</code></li>
                 <li>Copy the overlay URL below and add it as a Browser Source in OBS</li>
+                <li>Apply your preferred message style and settings</li>
             </ol>
 
             <div class="overlay-url">
@@ -30,23 +31,131 @@
         <div class="card">
             <h2>Settings</h2>
             <div class="settings-form">
-                <div class="form-group">
-                    <label for="max-messages">Maximum messages to display:</label>
-                    <input type="number" id="max-messages" value="5" min="1" max="20">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="basic">Basic</button>
+                    <button class="tab-btn" data-tab="colors">Message Style</button>
+                    <button class="tab-btn" data-tab="presets">Presets</button>
                 </div>
 
-                <div class="form-group">
-                    <label for="display-time">Message display time (seconds):</label>
-                    <input type="number" id="display-time" value="10" min="1" max="60">
+                <div class="tab-content active" id="basic-tab">
+                    <div class="form-group">
+                        <label for="max-messages">Maximum messages to display:</label>
+                        <input type="number" id="max-messages" value="5" min="1" max="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="display-time">Message display time (seconds):</label>
+                        <input type="number" id="display-time" value="10" min="1" max="60">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" id="keep-messages">
+                        <label for="keep-messages">Keep messages permanently (don't auto-remove)</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="theme">Theme:</label>
+                        <select id="theme">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                            <option value="transparent">Transparent</option>
+                            <option value="purple">Purple</option>
+                            <option value="green">Green</option>
+                            <option value="gaming">Gaming</option>
+                        </select>
+                        <p class="note">Note: All themes have transparent backgrounds for OBS compatibility</p>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="theme">Theme:</label>
-                    <select id="theme">
-                        <option value="dark">Dark</option>
-                        <option value="light">Light</option>
-                        <option value="transparent">Transparent</option>
-                    </select>
+                <div class="tab-content" id="colors-tab">
+                    <div class="form-group info-box">
+                        <p>The background is always transparent for OBS compatibility. Only message styles can be
+                            customized.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="background-color">Background Color: <small>(Always transparent for
+                                OBS)</small></label>
+                        <div class="color-control">
+                            <input type="color" id="background-color" value="#000000">
+                            <input type="range" id="bg-opacity" min="0" max="100" value="0" disabled>
+                            <span id="bg-opacity-value">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message-bg-color">Message Bubble Color:</label>
+                        <div class="color-control">
+                            <input type="color" id="message-bg-color" value="#3c3c3c">
+                            <input type="range" id="message-opacity" min="0" max="100" value="80">
+                            <span id="message-opacity-value">80%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="text-color">Text Color:</label>
+                        <div class="color-control">
+                            <input type="color" id="text-color" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name-color">Name Color:</label>
+                        <div class="color-control">
+                            <input type="color" id="name-color" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="use-custom-colors">
+                            <label for="use-custom-colors">Use custom colors</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="presets-tab">
+                    <div class="form-group info-box">
+                        <p>Select a preset style for your messages. All presets have transparent backgrounds.</p>
+                    </div>
+                    <div class="preset-grid">
+                        <div class="preset-card" data-preset="dark">
+                            <div class="preset-preview dark-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Dark</span>
+                        </div>
+                        <div class="preset-card" data-preset="light">
+                            <div class="preset-preview light-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Light</span>
+                        </div>
+                        <div class="preset-card" data-preset="transparent">
+                            <div class="preset-preview transparent-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Transparent</span>
+                        </div>
+                        <div class="preset-card" data-preset="purple">
+                            <div class="preset-preview purple-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Purple</span>
+                        </div>
+                        <div class="preset-card" data-preset="green">
+                            <div class="preset-preview green-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Green</span>
+                        </div>
+                        <div class="preset-card" data-preset="gaming">
+                            <div class="preset-preview gaming-preview">
+                                <div class="preview-msg"></div>
+                            </div>
+                            <span>Gaming</span>
+                        </div>
+                    </div>
                 </div>
 
                 <button id="apply-settings">Apply Settings</button>
