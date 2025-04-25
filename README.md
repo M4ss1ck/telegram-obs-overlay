@@ -75,11 +75,49 @@ A real-time Telegram to OBS overlay generator that displays messages from a spec
 
 ## Docker Deployment
 
-You can also run this application using Docker:
+You can run this application using Docker with file watching for development.
+
+### Production Mode
+
+To run the application in production mode:
 
 ```bash
-docker-compose up -d
+# Start the container
+npm run docker:start
+
+# Or with docker compose directly
+docker compose up -d
 ```
+
+### Development Mode with File Watching
+
+To run in development mode with file watching (changes to files will automatically sync with the container):
+
+```bash
+# Start in development mode with watch
+npm run docker:dev
+
+# Or with docker compose directly
+docker compose up --watch
+```
+
+> **Important Note:** The Docker configuration uses Docker Compose's `watch` feature instead of volume mounts for development. This provides better performance and more control over which files are synchronized. Don't add volume mounts that would conflict with the watch paths, or you'll see the warning: `path also declared by a bind mount volume, this path won't be monitored!`
+
+File watching will:
+
+- Automatically sync code changes to the container without restarting
+- Rebuild the container when package.json changes
+- Ignore node_modules and other unnecessary files
+
+### Docker Commands
+
+The following npm scripts are available for Docker:
+
+- `npm run docker:build` - Build the Docker image
+- `npm run docker:start` - Start the container in production mode
+- `npm run docker:stop` - Stop the container
+- `npm run docker:dev` - Start with file watching (for development)
+- `npm run docker:logs` - View the container logs
 
 ## Coolify Deployment
 
@@ -134,6 +172,7 @@ For the bot to receive messages from a group or channel:
 - **Bot not receiving messages?** For privacy reasons, Telegram bots in groups only receive messages that explicitly mention them, or commands they can handle, unless the bot is an admin
 - **Images not showing?** Make sure your server can reach the Telegram API to download the files
 - **Docker or Coolify issues?** Check the logs for any errors related to environment variables or network connectivity
+- **Watch mode not working?** Ensure you don't have conflicting volume mounts in your docker-compose files
 
 ## License
 

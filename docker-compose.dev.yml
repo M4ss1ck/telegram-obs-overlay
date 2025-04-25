@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: telegram-obs-overlay
+    container_name: telegram-obs-overlay-dev
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
@@ -13,13 +13,8 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHAT_ID=${CHAT_ID}
       - PORT=${PORT:-3000}
-      - NODE_ENV=${NODE_ENV:-production}
-    command: >
-      sh -c "if [ \"$NODE_ENV\" = \"development\" ]; then 
-              nodemon server.js; 
-            else 
-              node server.js; 
-            fi"
+      - NODE_ENV=development
+    command: nodemon server.js
     develop:
       watch:
         - action: sync
