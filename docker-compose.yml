@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  telegram-obs-overlay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-obs-overlay
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - CHAT_ID=${CHAT_ID}
+      - PORT=${PORT:-3000}
+    volumes:
+      - .env:/app/.env 

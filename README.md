@@ -73,6 +73,45 @@ A real-time Telegram to OBS overlay generator that displays messages from a spec
 
 4. Customize the overlay appearance in the web interface and click "Apply Settings"
 
+## Docker Deployment
+
+You can also run this application using Docker:
+
+```bash
+docker-compose up -d
+```
+
+## Coolify Deployment
+
+This project includes ready-to-use configuration for deployment with [Coolify](https://coolify.io/).
+
+### Steps to Deploy on Coolify:
+
+1. Make sure you have a Coolify instance running.
+
+2. In the Coolify dashboard, create a new service:
+
+   - Choose "Application"
+   - Select "Docker" as the deployment method
+   - Provide your Git repository URL
+
+3. Configure the deployment:
+
+   - Set the build method to "Dockerfile"
+   - Add the following environment variables:
+     - `BOT_TOKEN`: Your Telegram bot token
+     - `CHAT_ID`: Your Telegram chat ID
+     - `PORT`: Port for the application (default: 3000)
+
+4. Set up the network:
+
+   - Make sure to expose port 3000 (or your custom port)
+   - Configure the domain if you want to access the application via a domain name
+
+5. Deploy the application and wait for the build to complete.
+
+6. Once deployed, you can access the overlay at `https://your-domain/overlay` or `http://your-server-ip:3000/overlay`.
+
 ## Customization
 
 The web interface allows you to customize:
@@ -93,7 +132,8 @@ For the bot to receive messages from a group or channel:
 
 - **Messages not appearing?** Make sure your bot is in the chat and has permission to read messages
 - **Bot not receiving messages?** For privacy reasons, Telegram bots in groups only receive messages that explicitly mention them, or commands they can handle, unless the bot is an admin
-- **Images not showing?** The current version only displays a placeholder for images/stickers. Future versions will support media
+- **Images not showing?** Make sure your server can reach the Telegram API to download the files
+- **Docker or Coolify issues?** Check the logs for any errors related to environment variables or network connectivity
 
 ## License
 
