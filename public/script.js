@@ -30,16 +30,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Copy button functionality
   const copyBtn = document.getElementById("copy-btn");
-  copyBtn.addEventListener("click", () => {
-    overlayUrlInput.select();
-    document.execCommand("copy");
-
-    // Show feedback
-    const originalText = copyBtn.textContent;
-    copyBtn.textContent = "Copied!";
-    setTimeout(() => {
-      copyBtn.textContent = originalText;
-    }, 2000);
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(overlayUrlInput.value);
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      copyBtn.textContent = "Failed!";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy";
+      }, 2000);
+    }
   });
 
   // Tab switching
