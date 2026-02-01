@@ -17,6 +17,16 @@ if (!BOT_TOKEN) {
   console.error("Error: BOT_TOKEN environment variable not set.");
   process.exit(1);
 }
+
+// Validate bot token format (numeric_id:alphanumeric_secret)
+const TOKEN_REGEX = /^\d+:[A-Za-z0-9_-]+$/;
+if (!TOKEN_REGEX.test(BOT_TOKEN)) {
+  console.error(
+    "Error: BOT_TOKEN format is invalid. Expected format: 123456789:ABCdefGHI...",
+  );
+  process.exit(1);
+}
+
 const bot = new Telegraf(BOT_TOKEN);
 
 let botUsername = bot.botInfo?.username;
@@ -62,7 +72,7 @@ app.use(express.static(path.join(__dirname, "public")));
 async function getFileUrl(fileId) {
   try {
     const response = await axios.get(
-      `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`
+      `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`,
     );
     if (
       response.data &&
@@ -131,7 +141,7 @@ bot.on("message", async (ctx) => {
   // Only process if there are connected overlay clients for this chat
   if (targetClients && targetClients.length > 0) {
     console.log(
-      `Message received from chat ${chatId}, forwarding to ${targetClients.length} clients.`
+      `Message received from chat ${chatId}, forwarding to ${targetClients.length} clients.`,
     );
     const message = {
       id: ctx.message.message_id,
@@ -183,11 +193,11 @@ server.listen(PORT, () => {
 });
 
 // Start the bot
+console.log("Starting Telegram bot...");
 bot.launch().catch((err) => {
-  console.error("Error starting Telegram bot:", err);
+  console.error("Error starting Telegram bot:", err.message);
+  process.exit(1);
 });
-
-console.log("Attempting to start Telegram bot..."); // Log before launch
 
 // Enable graceful stop
 process.once("SIGINT", () => {
