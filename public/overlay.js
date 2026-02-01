@@ -1,11 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Helper function to parse and clamp integer values
+  function parseIntClamped(value, defaultVal, min, max) {
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) return defaultVal;
+    return Math.max(min, Math.min(max, parsed));
+  }
+
   // Parse URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const isPreview = urlParams.get("preview") === "true";
-  const chatId = urlParams.get("chatId"); // <-- Get Chat ID
+  const chatId = urlParams.get("chatId");
 
   console.log(`Overlay Mode: ${isPreview ? "Preview" : "Live"}`);
-  console.log(`Target Chat ID: ${chatId || "None Provided"}`); // Log Chat ID
+  console.log(`Target Chat ID: ${chatId || "None Provided"}`);
 
   if (!chatId && !isPreview) {
     // If not in preview and no chat ID, display an error and don't connect
@@ -24,10 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Controls removed for live overlay.");
   }
 
-  // Load settings PRIMARILY from URL parameters
-  const theme = urlParams.get("theme") || "dark"; // Default to dark if param missing
-  const maxMessages = parseInt(urlParams.get("maxMessages") || 5);
-  const displayTime = parseInt(urlParams.get("displayTime") || 10) * 1000;
+  // Load and validate settings from URL parameters
+  const validThemes = ["dark", "light", "transparent", "purple", "green", "gaming"];
+  const rawTheme = urlParams.get("theme");
+  const theme = validThemes.includes(rawTheme) ? rawTheme : "dark";
+  const maxMessages = parseIntClamped(urlParams.get("maxMessages"), 5, 1, 50);
+  const displayTime = parseIntClamped(urlParams.get("displayTime"), 10, 1, 300) * 1000;
   const keepMessages = urlParams.get("keepMessages") === "true";
   const useCustomColors = urlParams.get("useCustomColors") === "true";
 
