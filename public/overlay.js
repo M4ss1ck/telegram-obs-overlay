@@ -104,13 +104,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // WebSocket event handlers
   socket.on("connect", () => {
     console.log("Connected to server");
+    // Remove any disconnect message on reconnection
+    const disconnectMsg = document.querySelector(".system-message.disconnected");
+    if (disconnectMsg) {
+      disconnectMsg.remove();
+    }
     // Subscribe to the chat ID immediately after connecting
     if (chatId) {
       console.log(`Subscribing to chat ID: ${chatId}`);
       socket.emit("subscribe", chatId);
     } else if (isPreview) {
       console.log("Preview mode: Not subscribing to a specific chat ID.");
-      // In preview, we might show placeholder messages instead of connecting
     }
   });
 
