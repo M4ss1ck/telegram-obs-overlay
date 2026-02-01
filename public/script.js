@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const protocol = window.location.protocol;
   const hostname = window.location.hostname;
   const port = window.location.port;
-  const overlayUrl = `${protocol}//${hostname}:${port}/overlay`;
+  const overlayUrl = `${protocol}//${hostname}${port ? ':' + port : ''}/overlay`;
 
   const overlayUrlInput = document.getElementById("overlay-url");
   overlayUrlInput.value = overlayUrl;
@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const protocol = window.location.protocol;
     const hostname = window.location.hostname;
     const port = window.location.port;
-    let baseUrl = `${protocol}//${hostname}:${port}/overlay`; // Use the actual overlay path
+    let baseUrl = `${protocol}//${hostname}${port ? ':' + port : ''}/overlay`;
 
     // Add chatId as the FIRST parameter for clarity and potential server-side routing
     let params = `?chatId=${encodeURIComponent(chatId)}`;
